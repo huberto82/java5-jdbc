@@ -74,13 +74,12 @@ public class SpringQuizApp implements CommandLineRunner {
                 .build();
         questions.add(q);
         repository.save(q);
-
         Quiz quiz = Quiz.builder().title("Język Java").questions(questions).build();
         quizRepository.save(quiz);
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws Exception {
         try {
             initData(questionRepository, quizRepository);
         } catch (Exception e){
@@ -110,5 +109,11 @@ public class SpringQuizApp implements CommandLineRunner {
         }
         controller.completeQuiz();
         System.out.println("Podsumowanie quizu: " + controller.summary());
+        try {
+            quizService.transferPoints(1L, 2L, 3);
+        } catch (Exception e){
+            System.out.println("Nie powiódł się transfer puntków. Rollback!!!");
+        }
+        System.exit(0);
     }
 }
