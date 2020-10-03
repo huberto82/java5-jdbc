@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import pl.sda.springquiz.controller.QuizController;
 import pl.sda.springquiz.repository.SpringQuestionRepository;
 import pl.sda.springquiz.repository.SpringQuizRepository;
+import pl.sda.springquiz.service.NotEnoughPoints;
 import pl.sda.springquiz.service.SpringQuizService;
 
 import java.util.HashSet;
@@ -109,10 +110,12 @@ public class SpringQuizApp implements CommandLineRunner {
         }
         controller.completeQuiz();
         System.out.println("Podsumowanie quizu: " + controller.summary());
+        System.out.println("Transfer punktów");
         try {
-            quizService.transferPoints(1L, 2L, 3);
-        } catch (Exception e){
-            System.out.println("Nie powiódł się transfer puntków. Rollback!!!");
+            quizService.transferPoints(1L, 2L, 7);
+            System.out.println("Punkty przetransferowane!");
+        } catch (NotEnoughPoints e){
+            System.out.println("Punktów nie można przesłać. Wystapił wyjątek: " + e.getMessage());
         }
         System.exit(0);
     }

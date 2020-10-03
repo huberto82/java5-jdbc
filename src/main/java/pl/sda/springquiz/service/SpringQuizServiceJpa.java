@@ -59,8 +59,8 @@ public class SpringQuizServiceJpa implements SpringQuizService {
     }
 
     @Override
-    @Transactional(rollbackOn = Exception.class) // wskazanie wyjątku, którego rzucenie wewnątrz tranksacji poowoduje rollback
-    public boolean transferPoints(long questionSourceId, long questionTargetId, int points) throws Exception {
+    @Transactional(rollbackOn = NotEnoughPoints.class) // wskazanie wyjątku, którego rzucenie wewnątrz tranksacji poowoduje rollback
+    public boolean transferPoints(long questionSourceId, long questionTargetId, int points) throws NotEnoughPoints {
         Optional<Question> source = questionRepository.findById(questionSourceId);
         Optional<Question> target = questionRepository.findById(questionTargetId);
         if (source.isPresent() && target.isPresent()){
@@ -69,7 +69,7 @@ public class SpringQuizServiceJpa implements SpringQuizService {
             sourceQuestion.setPoints(sourceQuestion.getPoints()-points);
             targetQuestion.setPoints(targetQuestion.getPoints()+points);
             if (sourceQuestion.getPoints() < 0){
-                throw new Exception(); //rzucenie wyjątku powodującego rollback
+                throw new NotEnoughPoints(); //rzucenie wyjątku powodującego rollback
             }
             return true;//brak wystąpienia wyjątku powoduje automatyczny commit
         }
